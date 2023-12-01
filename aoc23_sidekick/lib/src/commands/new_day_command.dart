@@ -22,7 +22,7 @@ void main(List<String> args) {
 }
 ''');
     if (golfing) {
-      File('bin/day${day}_part1.dart.min')
+      File('bin/day${day}_part1.dart.golf')
         ..createSync()
         ..writeAsStringSync('''
 main(a, {i}) {
@@ -39,7 +39,7 @@ void main(List<String> args) {
 }
 ''');
     if (golfing) {
-      File('bin/day${day}_part2.dart.min')
+      File('bin/day${day}_part2.dart.golf')
         ..createSync()
         ..writeAsStringSync('''
 main(a, {i}) {
@@ -63,7 +63,7 @@ import '../bin/day${day}_part1.dart' as day${day}_part1;
 ''');
     if (golfing) {
       await testFile.appendString('''
-import '../bin/day${day}_part1.dart.min' as day${day}_part1_min;
+import '../bin/day${day}_part1.dart.golf' as day${day}_part1_golf;
 ''');
     }
     await testFile.appendString('''
@@ -71,7 +71,7 @@ import '../bin/day${day}_part2.dart' as day${day}_part2;
 ''');
     if (golfing) {
       await testFile.appendString('''
-import '../bin/day${day}_part2.dart.min' as day${day}_part2_min;
+import '../bin/day${day}_part2.dart.golf' as day${day}_part2_golf;
 ''');
     }
     await testFile.appendString('''
@@ -91,7 +91,7 @@ void main() {
       await testFile.appendString('''
     test('golf part 1', () {
       final output = testMain(
-        day${day}_part1_min.main,
+        day${day}_part1_golf.main,
         input: File('data/day${day}_sample.txt').readAsStringSync(),
       );
       expect(output, '100');
@@ -121,7 +121,7 @@ void main() {
       await testFile.appendString('''
     test('golf part 2', () {
       final output = testMain(
-        day${day}_part2_min.main,
+        day${day}_part2_golf.main,
         input: File('data/day${day}_sample.txt').readAsStringSync(),
       );
       expect(output, '100');
