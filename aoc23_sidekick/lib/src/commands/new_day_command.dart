@@ -22,7 +22,7 @@ void main(List<String> args) {
 }
 ''');
     if (golfing) {
-      File('bin/day${day}_part1.min.dart')
+      File('bin/day${day}_part1.dart.min')
         ..createSync()
         ..writeAsStringSync('''
 main(a, {i}) {
@@ -39,7 +39,7 @@ void main(List<String> args) {
 }
 ''');
     if (golfing) {
-      File('bin/day${day}_part2.min.dart')
+      File('bin/day${day}_part2.dart.min')
         ..createSync()
         ..writeAsStringSync('''
 main(a, {i}) {
@@ -63,7 +63,7 @@ import '../bin/day${day}_part1.dart' as day${day}_part1;
 ''');
     if (golfing) {
       await testFile.appendString('''
-import '../bin/day${day}_part1.min.dart' as day${day}_part1_min;
+import '../bin/day${day}_part1.dart.min' as day${day}_part1_min;
 ''');
     }
     await testFile.appendString('''
@@ -71,7 +71,7 @@ import '../bin/day${day}_part2.dart' as day${day}_part2;
 ''');
     if (golfing) {
       await testFile.appendString('''
-import '../bin/day${day}_part2.min.dart' as day${day}_part2_min;
+import '../bin/day${day}_part2.dart.min' as day${day}_part2_min;
 ''');
     }
     await testFile.appendString('''
