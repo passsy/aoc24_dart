@@ -53,28 +53,28 @@ main(a, {i}) {
 
     final testFile = File('test/day${day}_test.dart')..createSync();
 
-    testFile.appendString('''
+    await testFile.appendString('''
 import 'dart:io';
 
 import 'package:test/test.dart';
 ''');
-    testFile.appendString('''
+    await testFile.appendString('''
 import '../bin/day${day}_part1.dart' as day${day}_part1;
 ''');
     if (golfing) {
-      testFile.appendString('''
+      await testFile.appendString('''
 import '../bin/day${day}_part1.min.dart' as day${day}_part1_min;
 ''');
     }
-    testFile.appendString('''
+    await testFile.appendString('''
 import '../bin/day${day}_part2.dart' as day${day}_part2;
 ''');
     if (golfing) {
-      testFile.appendString('''
+      await testFile.appendString('''
 import '../bin/day${day}_part2.min.dart' as day${day}_part2_min;
 ''');
     }
-    testFile.appendString('''
+    await testFile.appendString('''
 import 'main_tester.dart';
 
 void main() {
@@ -88,7 +88,7 @@ void main() {
     });
 ''');
     if (golfing) {
-      testFile.appendString('''
+      await testFile.appendString('''
     test('golf part 1', () {
       final output = testMain(
         day${day}_part1_min.main,
@@ -98,7 +98,7 @@ void main() {
     });
 ''');
     }
-    testFile.appendString('''
+    await testFile.appendString('''
     test('solve part 1', () {
       final output = testMain(
         day${day}_part1.main,
@@ -108,7 +108,7 @@ void main() {
       print(output);
     });
 ''');
-    testFile.appendString('''
+    await testFile.appendString('''
     test('sample part 2', () {
       final output = testMain(
         day${day}_part2.main,
@@ -118,7 +118,7 @@ void main() {
     });
 ''');
     if (golfing) {
-      testFile.appendString('''
+      await testFile.appendString('''
     test('golf part 2', () {
       final output = testMain(
         day${day}_part2_min.main,
@@ -128,7 +128,7 @@ void main() {
     });
 ''');
     }
-    testFile.appendString('''
+    await testFile.appendString('''
     test('solve part 2', () {
       final output = testMain(
         day${day}_part2.main,
@@ -137,7 +137,7 @@ void main() {
       expect(output, isNot('0'));
       print(output);
     });''');
-    testFile.appendString('''
+    await testFile.appendString('''
   });
 }
 ''');
