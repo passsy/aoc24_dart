@@ -12,53 +12,73 @@ class NewDayCommand extends Command {
     final singleDigitDay = ask('Day?', validator: Ask.integer);
     final day = singleDigitDay.padLeft(2, '0');
 
-    final part1File = File('bin/day${day}_part1.dart')
+    final golfing = confirm('Are you code golfing this day?');
+
+    File('bin/day${day}_part1.dart')
       ..createSync()
       ..writeAsStringSync('''
 void main(List<String> args) {
   print(0);
 }
 ''');
-    final part1MinFile = File('bin/day${day}_part1.min.dart')
-      ..createSync()
-      ..writeAsStringSync('''
+    if (golfing) {
+      File('bin/day${day}_part1.min.dart')
+        ..createSync()
+        ..writeAsStringSync('''
 main(a, {i}) {
   print(0);
 }
 ''');
+    }
 
-    final part2File = File('bin/day${day}_part2.dart')
+    File('bin/day${day}_part2.dart')
       ..createSync()
       ..writeAsStringSync('''
 void main(List<String> args) {
   print(0);
 }
 ''');
-    final part2MinFile = File('bin/day${day}_part2.min.dart')
-      ..createSync()
-      ..writeAsStringSync('''
+    if (golfing) {
+      File('bin/day${day}_part2.min.dart')
+        ..createSync()
+        ..writeAsStringSync('''
 main(a, {i}) {
   print(0);
 }
 ''');
+    }
 
-    final sampleFile = File('data/day${day}_sample.txt')..createSync();
-    final input = File('data/day${day}_input.txt')..createSync();
+    File('data/day${day}_sample.txt').createSync();
+    File('data/day${day}_input.txt').createSync();
 
-    final testFile = File('test/day${day}_test.dart')
-      ..createSync()
-      ..writeAsStringSync('''
+    final testFile = File('test/day${day}_test.dart')..createSync();
+
+    testFile.appendString('''
 import 'dart:io';
 
 import 'package:test/test.dart';
+''');
+    testFile.appendString('''
 import '../bin/day${day}_part1.dart' as day${day}_part1;
+''');
+    if (golfing) {
+      testFile.appendString('''
 import '../bin/day${day}_part1.min.dart' as day${day}_part1_min;
+''');
+    }
+    testFile.appendString('''
 import '../bin/day${day}_part2.dart' as day${day}_part2;
+''');
+    if (golfing) {
+      testFile.appendString('''
 import '../bin/day${day}_part2.min.dart' as day${day}_part2_min;
+''');
+    }
+    testFile.appendString('''
 import 'main_tester.dart';
 
 void main() {
-  group('day ${day}', () {
+  group('day $day', () {
     test('sample part 1', () {
       final output = testMain(
         day${day}_part1.main,
@@ -66,7 +86,9 @@ void main() {
       );
       expect(output, '100');
     });
-
+''');
+    if (golfing) {
+      testFile.appendString('''
     test('golf part 1', () {
       final output = testMain(
         day${day}_part1_min.main,
@@ -74,7 +96,9 @@ void main() {
       );
       expect(output, '100');
     });
-
+''');
+    }
+    testFile.appendString('''
     test('solve part 1', () {
       final output = testMain(
         day${day}_part1.main,
@@ -83,7 +107,8 @@ void main() {
       expect(output, isNot('0'));
       print(output);
     });
-
+''');
+    testFile.appendString('''
     test('sample part 2', () {
       final output = testMain(
         day${day}_part2.main,
@@ -91,7 +116,9 @@ void main() {
       );
       expect(output, '100');
     });
-
+''');
+    if (golfing) {
+      testFile.appendString('''
     test('golf part 2', () {
       final output = testMain(
         day${day}_part2_min.main,
@@ -99,7 +126,9 @@ void main() {
       );
       expect(output, '100');
     });
-
+''');
+    }
+    testFile.appendString('''
     test('solve part 2', () {
       final output = testMain(
         day${day}_part2.main,
@@ -107,18 +136,11 @@ void main() {
       );
       expect(output, isNot('0'));
       print(output);
-    });
+    });''');
+    testFile.appendString('''
   });
 }
 ''');
-
-    assert(part1File.existsSync());
-    assert(part1MinFile.existsSync());
-    assert(part2File.existsSync());
-    assert(part2MinFile.existsSync());
-    assert(testFile.existsSync());
-    assert(sampleFile.existsSync());
-    assert(input.existsSync());
 
     print(green('Created day $day'));
   }

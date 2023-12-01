@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:aoc23_sidekick/src/commands/clean_command.dart';
-import 'package:sidekick_core/sidekick_core.dart';
 import 'package:aoc23_sidekick/src/commands/new_day_command.dart';
+import 'package:sidekick_core/sidekick_core.dart';
 
 Future<void> runAoc23(List<String> args) async {
   final runner = initializeSidekick(

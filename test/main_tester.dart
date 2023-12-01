@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:test/fake.dart';
-import 'package:test/scaffolding.dart';
 
 /// Calls a main function with input as arguments (splitted by line) and returns the output (stdout) of the program as full String
 String testMain(void Function(List<String>) main,
