@@ -1,0 +1,1 @@
+main(a,{m=0,s,l,p=int.parse}){for(l in a){s=l.split(RegExp(r'\D+')).where((e)=>!e.isEmpty).toList();m+=p(s[0])*10+p(s.last);}print(m);}

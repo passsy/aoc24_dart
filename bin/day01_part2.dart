@@ -1,24 +1,12 @@
 void main(List<String> args) {
   int sum = 0;
   for (final line in args) {
-    final first = getFirstInt(line);
-    final second = getLastInt(line);
-    final int value = first * 10 + second;
-    sum += value;
+    sum += getFirstInt(line, 1, 0) * 10 + getFirstInt(line, 0, 1);
   }
   print(sum);
 }
 
-final wordToInt = {
-  '1': 1,
-  '2': 2,
-  '3': 3,
-  '4': 4,
-  '5': 5,
-  '6': 6,
-  '7': 7,
-  '8': 8,
-  '9': 9,
+final words = {
   'one': 1,
   'two': 2,
   'three': 3,
@@ -27,33 +15,20 @@ final wordToInt = {
   'six': 6,
   'seven': 7,
   'eight': 8,
-  'nine': 9,
+  'nine': 9
 };
 
-int getFirstInt(String line) {
-  int index = 0;
-  while (index < line.length) {
-    final remaining = line.substring(index);
-    for (final MapEntry(key: word, :value) in wordToInt.entries) {
-      if (remaining.startsWith(word)) {
-        return value;
+int getFirstInt(String line, int startMulti, int endMulti) {
+  for (int index = 0; index < line.length; index++) {
+    final start = index * startMulti + (line.length - index - 1) * endMulti;
+    final sub = line.substring(start, line.length);
+    for (final e in words.entries) {
+      final n = int.tryParse(sub[0]);
+      if (n != null) return n;
+      if (sub.startsWith(e.key)) {
+        return e.value;
       }
     }
-    index++;
-  }
-  throw 'No number found in $line';
-}
-
-int getLastInt(String line) {
-  int index = line.length - 1;
-  while (index >= 0) {
-    final remaining = line.substring(0, index + 1);
-    for (final MapEntry(key: word, :value) in wordToInt.entries) {
-      if (remaining.endsWith(word)) {
-        return value;
-      }
-    }
-    index--;
   }
   throw 'No number found in $line';
 }
