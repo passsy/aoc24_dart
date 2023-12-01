@@ -37,17 +37,17 @@ void main() {
     test('sample part 2', () {
       final output = testMain(
         day01_part2.main,
-        input: File('data/day01_sample.txt').readAsStringSync(),
+        input: File('data/day01_sample2.txt').readAsStringSync(),
       );
-      expect(output, '100');
+      expect(output, '281');
     });
 
     test('golf part 2', () {
       final output = testMain(
         day01_part2_min.main,
-        input: File('data/day01_sample.txt').readAsStringSync(),
+        input: File('data/day01_sample2.txt').readAsStringSync(),
       );
-      expect(output, '100');
+      expect(output, '281');
     });
 
     test('solve part 2', () {
