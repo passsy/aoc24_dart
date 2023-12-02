@@ -36,14 +36,14 @@ void main() {
         day02_part2.main,
         input: File('data/day02_sample.txt').readAsStringSync(),
       );
-      expect(output, '100');
+      expect(output, '2286');
     });
     test('golf part 2', () {
       final output = testMain(
         day02_part2_golf.main,
         input: File('data/day02_sample.txt').readAsStringSync(),
       );
-      expect(output, '100');
+      expect(output, '2286');
     });
     test('solve part 2', () {
       final output = testMain(
