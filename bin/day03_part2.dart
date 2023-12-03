@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+
 void main(List<String> args) {
   final map = parseMap(args);
   final numbersOnMap = map.where((it) => it.number != null).toList();
@@ -75,14 +77,4 @@ List<PointOnMap> parseMap(List<String> args) {
     }
   }
   return map;
-}
-
-extension FirstWhereOrNull<T> on List<T> {
-  T? firstWhereOrNull(bool Function(T) test) {
-    try {
-      return firstWhere(test);
-    } catch (e) {
-      return null;
-    }
-  }
 }

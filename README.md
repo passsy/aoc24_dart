@@ -5,7 +5,8 @@ This is my attempt at solving the [Advent of Code 2022](https://adventofcode.com
 You can find the solution in `/bin`.
 
 Restrictions this year:
-- No external dependencies
+- No external dependencies (except for [`package:collection`](https://pub.dev/packages/collection))
+- Never use `class`, force learning functional style with Records
 
 ## Recent years
 
