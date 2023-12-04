@@ -27,7 +27,7 @@ void main() {
         day04_part2.main,
         input: File('data/day04_sample.txt').readAsStringSync(),
       );
-      expect(output, '100');
+      expect(output, '30');
     });
     test('solve part 2', () {
       final output = testMain(
