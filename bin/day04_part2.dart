@@ -1,7 +1,8 @@
 import 'package:collection/collection.dart';
 
+typedef Card = ({int number, List<int> selection, List<int> winningNumbers});
 void main(List<String> args) {
-  final cards = args.map((line) {
+  final List<Card> cards = args.map((line) {
     final match = RegExp(r'Card\s+(\d+):(.+)\|(.+)').firstMatch(line);
     List<int> numbers(String text) =>
         text.split(' ').map(int.tryParse).whereNotNull().toSet().toList();
@@ -12,12 +13,16 @@ void main(List<String> args) {
     );
   }).toList();
 
-  final bag = cards.toList();
+  final Map<int, List<Card>> bag = {};
+  for (final card in cards) {
+    bag.putIfAbsent(card.number, () => []);
+    bag[card.number]!.add(card);
+  }
 
   int visitedCards = 0;
   for (int i = 1; i <= cards.length; i++) {
-    final ticketsWithNumber = bag.where((it) => it.number == i).toList();
-    bag.removeWhere((it) => it.number == i);
+    final ticketsWithNumber = bag[i]!.toList();
+    bag.remove(i);
 
     final sampleTicket = ticketsWithNumber.first;
     final matches = sampleTicket.winningNumbers
@@ -27,9 +32,10 @@ void main(List<String> args) {
     visitedCards += ticketsWithNumber.length;
 
     for (int n = 1; n <= matches; n++) {
-      final newTickets = cards.firstWhere((card) => card.number == i + n);
+      int wonNumber = i + n;
+      final newTickets = cards.firstWhere((card) => card.number == wonNumber);
       for (int x = 0; x < ticketsWithNumber.length; x++) {
-        bag.add(newTickets);
+        bag[wonNumber]!.add(newTickets);
       }
     }
   }
