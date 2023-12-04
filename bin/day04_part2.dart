@@ -13,30 +13,26 @@ void main(List<String> args) {
     );
   }).toList();
 
-  final Map<int, List<Card>> bag = {};
+  final Map<int, int> bag = {};
   for (final card in cards) {
-    bag.putIfAbsent(card.number, () => []);
-    bag[card.number]!.add(card);
+    bag.putIfAbsent(card.number, () => 1);
   }
 
   int visitedCards = 0;
   for (int i = 1; i <= cards.length; i++) {
-    final ticketsWithNumber = bag[i]!.toList();
+    final ticketsWithNumber = bag[i]!;
     bag.remove(i);
 
-    final sampleTicket = ticketsWithNumber.first;
+    final sampleTicket = cards.firstWhere((card) => card.number == i);
     final matches = sampleTicket.winningNumbers
         .where(sampleTicket.selection.contains)
         .length;
 
-    visitedCards += ticketsWithNumber.length;
+    visitedCards += ticketsWithNumber;
 
     for (int n = 1; n <= matches; n++) {
       int wonNumber = i + n;
-      final newTickets = cards.firstWhere((card) => card.number == wonNumber);
-      for (int x = 0; x < ticketsWithNumber.length; x++) {
-        bag[wonNumber]!.add(newTickets);
-      }
+      bag[wonNumber] = bag[wonNumber]! + ticketsWithNumber;
     }
   }
 
