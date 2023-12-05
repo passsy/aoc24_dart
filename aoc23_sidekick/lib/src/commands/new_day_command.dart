@@ -79,8 +79,8 @@ import 'main_tester.dart';
 
 void main() {
   group('day $day', () {
-    test('sample part 1', () {
-      final output = testMain(
+    test('sample part 1', () async {
+      final output = await testMain(
         day${day}_part1.main,
         input: File('data/day${day}_sample.txt').readAsStringSync(),
       );
@@ -89,8 +89,8 @@ void main() {
 ''');
     if (golfing) {
       await testFile.appendString('''
-    test('golf part 1', () {
-      final output = testMain(
+    test('golf part 1', () async {
+      final output = await testMain(
         day${day}_part1_golf.main,
         input: File('data/day${day}_sample.txt').readAsStringSync(),
       );
@@ -99,8 +99,8 @@ void main() {
 ''');
     }
     await testFile.appendString('''
-    test('solve part 1', () {
-      final output = testMain(
+    test('solve part 1', () async {
+      final output = await testMain(
         day${day}_part1.main,
         input: File('data/day${day}_input.txt').readAsStringSync(),
       );
@@ -109,8 +109,8 @@ void main() {
     });
 ''');
     await testFile.appendString('''
-    test('sample part 2', () {
-      final output = testMain(
+    test('sample part 2', () async {
+      final output = await testMain(
         day${day}_part2.main,
         input: File('data/day${day}_sample.txt').readAsStringSync(),
       );
@@ -119,8 +119,8 @@ void main() {
 ''');
     if (golfing) {
       await testFile.appendString('''
-    test('golf part 2', () {
-      final output = testMain(
+    test('golf part 2', () async {
+      final output = await testMain(
         day${day}_part2_golf.main,
         input: File('data/day${day}_sample.txt').readAsStringSync(),
       );
@@ -129,11 +129,12 @@ void main() {
 ''');
     }
     await testFile.appendString('''
-    test('solve part 2', () {
-      final output = testMain(
+    test('solve part 2', () async {
+      final output = await testMain(
         day${day}_part2.main,
         input: File('data/day${day}_input.txt').readAsStringSync(),
       );
+      expect(output, isNot(contains('\\n')));
       expect(output, isNot('0'));
       print(output);
     });''');

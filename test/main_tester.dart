@@ -1,30 +1,39 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
+import 'dart:io' as io;
 
 import 'package:test/fake.dart';
 
 /// Calls a main function with input as arguments (splitted by line) and returns the output (stdout) of the program as full String
-String testMain(void Function(List<String>) main,
-    {String? input, String split = '\n'}) {
-  final stdout = FakeStdoutStream();
+Future<String> testMain(
+  FutureOr Function(List<String>) main, {
+  String? input,
+  String split = '\n',
+}) async {
+  final ioStdout = io.stdout;
+  final fakeStdout = FakeStdoutStream();
 
-  runZoned(
-    () => IOOverrides.runZoned(
-      () => main(input?.split(split) ?? []),
-      stdout: () => stdout,
+  await runZoned(
+    () async => io.IOOverrides.runZoned(
+      () async {
+        await main(input?.split(split) ?? []);
+      },
+      stdout: () => fakeStdout,
     ),
     zoneSpecification: ZoneSpecification(
       print: (self, parent, zone, line) {
-        final override = IOOverrides.current;
+        ioStdout.writeln(line);
+
+        // catch print calls and return them as result of the main function
+        final override = io.IOOverrides.current;
         override?.stdout.writeln(line);
       },
     ),
   );
-  return stdout.lines.join('\n');
+  return fakeStdout.lines.join('\n');
 }
 
-class FakeStdoutStream with Fake implements Stdout {
+class FakeStdoutStream with Fake implements io.Stdout {
   final List<List<int>> _writes = <List<int>>[];
 
   List<String> get lines => _writes.map(utf8.decode).toList();
