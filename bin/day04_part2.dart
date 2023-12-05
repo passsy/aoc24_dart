@@ -1,15 +1,16 @@
 import 'package:collection/collection.dart';
 
 typedef Card = ({int number, List<int> selection, List<int> winningNumbers});
-void main(List<String> args) {
+
+void main(List<String> args) async {
   final List<Card> cards = args.map((line) {
-    final match = RegExp(r'Card\s+(\d+):(.+)\|(.+)').firstMatch(line);
+    final match = RegExp(r'Card\s+(\d+):(.+)\|(.+)').firstMatch(line)!;
     List<int> numbers(String text) =>
         text.split(' ').map(int.tryParse).whereNotNull().toSet().toList();
     return (
-      number: int.parse(match!.group(1)!),
-      winningNumbers: numbers(match!.group(2)!),
-      selection: numbers(match!.group(3)!),
+      number: int.parse(match.group(1)!),
+      winningNumbers: numbers(match.group(2)!),
+      selection: numbers(match.group(3)!),
     );
   }).toList();
 
