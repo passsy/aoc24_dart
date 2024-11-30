@@ -1,2 +1,0 @@
-main(a,{z=0,h,x,b,i,n}){g(l,s,e){for(i=0;i<l.length;i++){b=l.substring(i*s+(l.length-i-1)*e,l.length);for(x in{'one':1,'two':2,'three':3,'four':4,'five':5,'six':6,'seven':7,'eight':8,'nine':9}.entries){n=int.tryParse(b[0]);if(n!=null)return n;if(b.startsWith(x.key))return x.value;}}throw b;}for(h in a)z+=g(h,1,0)*10+g(h,0,1);print(z);}
-// Not worth golfing

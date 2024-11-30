@@ -26,7 +26,7 @@ runSilent() {
 }
 
 cd "${CLI_PACKAGE_DIR}" || exit
-  echoerr "Installing aoc23 command line application..."
+  echoerr "Installing aoc24 command line application..."
 
   # Find dart executable from embedded dart sdk
   DART_SDK="${CLI_PACKAGE_DIR}/build/cache/dart-sdk"
