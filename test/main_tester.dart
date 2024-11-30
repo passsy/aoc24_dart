@@ -4,11 +4,11 @@ import 'dart:io' as io;
 
 import 'package:test/fake.dart';
 
-/// Calls a main function with input as arguments (splitted by line) and returns the output (stdout) of the program as full String
+/// Calls a main function with [input] as first and only argument
+/// and returns the output (stdout) of the program as full String
 Future<String> testMain(
-  FutureOr Function(List<String>) main, {
-  String? input,
-  String split = '\n',
+  FutureOr Function(String input) main, {
+  required String input,
 }) async {
   final ioStdout = io.stdout;
   final fakeStdout = FakeStdoutStream();
@@ -16,7 +16,7 @@ Future<String> testMain(
   await runZoned(
     () async => io.IOOverrides.runZoned(
       () async {
-        await main(input?.split(split) ?? []);
+        await main(input!);
       },
       stdout: () => fakeStdout,
     ),
