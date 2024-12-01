@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io' as io;
 
 import 'package:test/fake.dart';
+import 'package:test/test.dart';
 
 /// Calls a main function with [input] as first and only argument
 /// and returns the output (stdout) of the program as full String
@@ -16,7 +17,7 @@ Future<String> testMain(
   await runZoned(
     () async => io.IOOverrides.runZoned(
       () async {
-        await main(input!);
+        await main(input);
       },
       stdout: () => fakeStdout,
     ),
@@ -62,4 +63,31 @@ class FakeStdoutStream with Fake implements io.Stdout {
   void writeCharCode(int charCode) {
     _writes.add(utf8.encode(String.fromCharCode(charCode)));
   }
+}
+
+void checkLastLineNotZero(String output) {
+  final String lastLine;
+  if (output.contains('\n')) {
+    lastLine = output.split('\n').last;
+  } else {
+    lastLine = output;
+  }
+  print('\nSolution:\n$lastLine');
+  if (lastLine == '0') {
+    fail('Not solved, still printing default value 0 (in the last line)');
+  }
+}
+
+void checkLastLine(String output, String expected) {
+  final String lastLine;
+  if (output.contains('\n')) {
+    lastLine = output.split('\n').last;
+  } else {
+    lastLine = output;
+  }
+  print('\nSolution:\n$lastLine');
+  if (lastLine == '0') {
+    fail('Not solved, still printing default value 0 (in the last line)');
+  }
+  expect(lastLine, expected);
 }

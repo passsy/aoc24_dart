@@ -13,15 +13,14 @@ void main() {
           day01_part1.solveDay01,
           input: File('data/day01_sample.txt').readAsStringSync(),
         );
-        expect(output, day01_part1.sampleSolution);
+        checkLastLine(output, day01_part1.sampleSolution);
       });
       test('Solution p1', () async {
         final output = await testMain(
           day01_part1.solveDay01,
           input: File('data/day01_input.txt').readAsStringSync(),
         );
-        expect(output, isNot('0'));
-        print(output);
+        checkLastLineNotZero(output);
       });
     });
     group('Part 2', () {
@@ -30,16 +29,14 @@ void main() {
           day01_part2.solveDay01,
           input: File('data/day01_sample.txt').readAsStringSync(),
         );
-        expect(output, day01_part2.sampleSolution);
+        checkLastLine(output, day01_part2.sampleSolution);
       });
       test('Solution p2', () async {
         final output = await testMain(
           day01_part2.solveDay01,
           input: File('data/day01_input.txt').readAsStringSync(),
         );
-        expect(output, isNot(contains('\n')));
-        expect(output, isNot('0'));
-        print(output);
+        checkLastLineNotZero(output);
       });
     });
   });
