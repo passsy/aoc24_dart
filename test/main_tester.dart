@@ -23,6 +23,8 @@ Future<String> testMain(
     ),
     zoneSpecification: ZoneSpecification(
       print: (self, parent, zone, line) {
+        // print live, while executing the main function
+        // This is useful for large puzzles, to see progress
         ioStdout.writeln(line);
 
         // catch print calls and return them as result of the main function
@@ -72,10 +74,10 @@ void checkLastLineNotZero(String output) {
   } else {
     lastLine = output;
   }
-  print('\nSolution:\n$lastLine');
   if (lastLine == '0') {
     fail('Not solved, still printing default value 0 (in the last line)');
   }
+  print('\nSolution:\n$lastLine');
 }
 
 void checkLastLine(String output, String expected) {
@@ -85,9 +87,9 @@ void checkLastLine(String output, String expected) {
   } else {
     lastLine = output;
   }
-  print('\nSolution:\n$lastLine');
   if (lastLine == '0') {
     fail('Not solved, still printing default value 0 (in the last line)');
   }
+  print('\nSolution:\n$lastLine');
   expect(lastLine, expected);
 }
