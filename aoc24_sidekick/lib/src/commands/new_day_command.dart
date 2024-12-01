@@ -9,7 +9,16 @@ class NewDayCommand extends Command {
 
   @override
   Future<void> run() async {
-    final singleDigitDay = ask('Day?', validator: Ask.integer);
+    final rest = argResults!.rest.first;
+    final dayFromRest = int.tryParse(rest);
+    final int dayNumber;
+    if (dayFromRest != null) {
+      dayNumber = dayFromRest;
+    } else {
+      dayNumber = int.parse(ask('Day?', validator: Ask.integer));
+    }
+
+    final singleDigitDay = dayNumber.toString();
     final day = singleDigitDay.padLeft(2, '0');
 
     File('bin/day${day}_part1.dart')
@@ -63,7 +72,7 @@ void main() {
           day${day}_part1.solveDay$day,
           input: File('data/day${day}_sample.txt').readAsStringSync(),
         );
-        expect(output, day${day}_part1.sampleSolution);
+        checkLastLine(output, day${day}_part1.sampleSolution);
       });
 ''');
     await testFile.appendString('''
@@ -72,8 +81,7 @@ void main() {
           day${day}_part1.solveDay$day,
           input: File('data/day${day}_input.txt').readAsStringSync(),
         );
-        expect(output, isNot('0'));
-        print(output);
+        checkLastLineNotZero(output);
       });
     });
 ''');
@@ -84,7 +92,7 @@ void main() {
           day${day}_part2.solveDay$day,
           input: File('data/day${day}_sample.txt').readAsStringSync(),
         );
-        expect(output, day${day}_part2.sampleSolution);
+        checkLastLine(output, day${day}_part2.sampleSolution);
       });
 ''');
     await testFile.appendString('''
@@ -93,9 +101,7 @@ void main() {
           day${day}_part2.solveDay$day,
           input: File('data/day${day}_input.txt').readAsStringSync(),
         );
-        expect(output, isNot(contains('\\n')));
-        expect(output, isNot('0'));
-        print(output);
+        checkLastLineNotZero(output);
       });
     });
   });

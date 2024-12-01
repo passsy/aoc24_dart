@@ -4,6 +4,14 @@ This is my attempt at solving the [Advent of Code 2024](https://adventofcode.com
 
 You can find the solution in `/bin`.
 
+## CLI
+
+Generate all files for a new day:
+
+```
+./aoc24 new-day 2
+```
+
 ## Recent years
 
 Checkout my solutions of previous years:
