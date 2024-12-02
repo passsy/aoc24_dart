@@ -2,7 +2,7 @@ import 'package:dartx/dartx.dart';
 
 const sampleSolution = '11';
 
-void solveDay01(String input) async {
+void solveDay01(String input) {
   // https://adventofcode.com/2024/day/1
   // Solve Part 1 here
 

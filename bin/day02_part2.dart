@@ -1,5 +1,3 @@
-import 'package:dartx/dartx.dart';
-
 const sampleSolution = '4';
 
 void solveDay02(String input) {
@@ -18,7 +16,7 @@ void solveDay02(String input) {
       result += 1;
       print('SAFE: $levels\n');
     } else {
-      print('Not safe: $levels\n');
+      print('NOT SAFE: $levels\n');
     }
   }
 
@@ -27,7 +25,6 @@ void solveDay02(String input) {
 
 bool isSafeWithError(List<int> levels) {
   if (isSafe(levels)) {
-    print('SAFE: $levels\n');
     return true;
   }
 
@@ -35,12 +32,10 @@ bool isSafeWithError(List<int> levels) {
   for (int removeIndex = 0; removeIndex <= l.length; removeIndex++) {
     l = levels.toList()..removeAt(removeIndex);
     if (isSafe(l)) {
-      print('SAFE: $levels\n');
       return true;
     }
   }
 
-  print('NOT SAFE: $levels\n');
   return false;
 }
 
