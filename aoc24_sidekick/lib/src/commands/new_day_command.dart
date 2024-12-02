@@ -29,7 +29,32 @@ const sampleSolution = '100';
 void solveDay$day(String input) {
   // https://adventofcode.com/2024/day/$singleDigitDay
   // Solve Part 1 here
-  print(0);
+  
+  final lines = input.split('\\n').map((line) {
+    // \\w Any word character
+    // \\s Any whitespace character
+    // \\d Any digit
+    final matches = RegExp(r'(\\w+) (\\w+) (\\w+)').allMatches(line);
+    // final a = matches.first.group(1)!;
+    // final b = matches.first.group(2)!;
+    // final c = matches.first.group(3)!;
+
+    // final numbers = line.split(' ').map(int.parse).toList();
+
+    return line;
+  }).toList();
+  
+  int result = 0;
+  for (int i = 0; i < lines.length; i++) {
+    final line = lines[i];
+    print(line);
+
+    if (false) {
+      result += 1;
+    }
+  }
+
+  print(result);
 }
 ''');
 
