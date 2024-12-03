@@ -67,13 +67,18 @@ class FakeStdoutStream with Fake implements io.Stdout {
   }
 }
 
-void checkLastLineNotZero(String output) {
+String getLastLine(String output) {
   final String lastLine;
   if (output.contains('\n')) {
     lastLine = output.split('\n').last;
   } else {
     lastLine = output;
   }
+  return lastLine;
+}
+
+void checkLastLineNotZero(String output) {
+  final String lastLine = getLastLine(output);
   if (lastLine == '0') {
     fail('Not solved, still printing default value 0 (in the last line)');
   }
