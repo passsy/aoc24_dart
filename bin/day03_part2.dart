@@ -55,7 +55,8 @@ List<Token> lex(String line) {
     }
 
     if (remaining.startsWith('mul(')) {
-      final match = RegExp(r'^mul\((\d+),(\d+)\)').firstMatch(remaining);
+      final match =
+          RegExp(r'^mul\((\d{1,3}),(\d{1,3})\)').firstMatch(remaining);
       if (match == null) {
         character += 1;
         continue;
