@@ -28,6 +28,8 @@ void solveDay03(String input) {
           print('dont: $a * $b');
         }
       }
+
+      throw 'Unknown token: $token';
     }
   }
 
