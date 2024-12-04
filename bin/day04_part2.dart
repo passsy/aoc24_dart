@@ -5,18 +5,27 @@ void solveDay04(String input) {
   // Solve Part 2 here
 
   final lines = input.split('\n');
-  final array2d = lines.map((it) => it.split('')).toList();
+  final field = lines.map((it) => it.split('')).toList();
 
-  List<CharAtPoint> findA(String map) {
-    final lines = map.split('\n');
+  String? charAtPoint({required int x, required int y}) {
+    try {
+      return field[y][x];
+    } on RangeError catch (_) {
+      return null;
+    }
+  }
+
+  List<CharAtPoint> findPointsWithChar(String char) {
+    assert(char.length == 1);
     final maxY = lines.length;
     final maxX = lines[0].length;
 
     final found = <CharAtPoint>[];
     for (int y = 0; y < maxY; y++) {
       for (int x = 0; x < maxX; x++) {
-        if (array2d[y][x] == 'A') {
-          found.add((x: x, y: y, char: 'A'));
+        final c = charAtPoint(x: x, y: y);
+        if (c == char) {
+          found.add((x: x, y: y, char: char));
         }
       }
     }
@@ -24,76 +33,25 @@ void solveDay04(String input) {
     return found;
   }
 
-  final allA = findA(input);
-
-  Iterable<CharAtPoint> pointsInDirection(
-      Point point, Point Function(Point) nextPoint) sync* {
-    Point next = point;
-    while (true) {
-      try {
-        final value = array2d[next.y][next.x];
-        yield (x: next.x, y: next.y, char: value);
-      } on RangeError catch (_) {
-        return;
-      }
-      next = nextPoint(next);
-    }
-  }
-
   int result = 0;
 
+  final allA = findPointsWithChar('A');
   for (final point in allA) {
     final p = (x: point.x, y: point.y);
 
-    final bottomRight = (x: p.x + 1, y: p.y + 1);
-    final bottomLeft = (x: p.x - 1, y: p.y + 1);
-    final topRight = (x: p.x + 1, y: p.y - 1);
-    final topLeft = (x: p.x - 1, y: p.y - 1);
+    final bottomRight = charAtPoint(x: p.x + 1, y: p.y + 1);
+    final bottomLeft = charAtPoint(x: p.x - 1, y: p.y + 1);
+    final topRight = charAtPoint(x: p.x + 1, y: p.y - 1);
+    final topLeft = charAtPoint(x: p.x - 1, y: p.y - 1);
 
-    int slash = 0;
-    int backslash = 0;
+    final slashUp = '${bottomLeft}A${topRight}';
+    final slashDown = '${topRight}A${bottomLeft}';
+    final backslashDown = '${topLeft}A${bottomRight}';
+    final backslashUp = '${bottomRight}A${topLeft}';
 
-    final northEast =
-        pointsInDirection(bottomLeft, (p) => (x: p.x + 1, y: p.y - 1))
-            .take(4)
-            .toList();
-    final northEastWord = northEast.map((it) => it.char).take(3).join();
-    if (northEastWord == 'MAS') {
-      print('northEast $p');
-      slash++;
-    }
-
-    final northWest =
-        pointsInDirection(bottomRight, (p) => (x: p.x - 1, y: p.y - 1))
-            .take(4)
-            .toList();
-    final northWestWord = northWest.map((it) => it.char).take(3).join();
-    if (northWestWord == 'MAS') {
-      print('northWest $p');
-      backslash++;
-    }
-
-    final southEast =
-        pointsInDirection(topLeft, (p) => (x: p.x + 1, y: p.y + 1))
-            .take(4)
-            .toList();
-    final southEastWord = southEast.map((it) => it.char).take(3).join();
-    if (southEastWord == 'MAS') {
-      print('southEast $p');
-      backslash++;
-    }
-
-    final southWest =
-        pointsInDirection(topRight, (p) => (x: p.x - 1, y: p.y + 1))
-            .take(4)
-            .toList();
-    final southWestWord = southWest.map((it) => it.char).take(3).join();
-    if (southWestWord == 'MAS') {
-      print('southWest $p');
-      slash++;
-    }
-
-    if (slash > 0 && backslash > 0) {
+    final slash = slashUp == 'MAS' || slashDown == 'MAS';
+    final backslash = backslashDown == 'MAS' || backslashUp == 'MAS';
+    if (slash && backslash) {
       result++;
     }
   }
