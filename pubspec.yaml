@@ -10,6 +10,7 @@ dependencies:
   dartx: ^1.1.0
   kt_dart: ^1.1.0
   deep_pick: ^1.1.0
+  trotter: ^2.2.0
 
 dev_dependencies:
   test: ^1.17.0
