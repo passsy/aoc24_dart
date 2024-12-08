@@ -38,7 +38,7 @@ void solveDay08(String input) {
 
   List<Point> findAntiNodes(List<Point> points) {
     final allPairs =
-        Permutations(2, points).iterable.toList().cast<List<Point>>();
+        Combinations(2, points).iterable.toList().cast<List<Point>>();
     final antiNodes = <Point>[];
     for (final pair in allPairs) {
       final a = pair[0];
