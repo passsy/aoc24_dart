@@ -22,16 +22,29 @@ class AocGrid<T> {
     }
   }
 
-  T? getValue(Point coordinate) {
+  T getValue(Point coordinate) {
+    if (isOutOfBounds(coordinate)) {
+      throw RangeError('Coordinate $coordinate is out of bounds');
+    }
+    return metadata[coordinate]!;
+  }
+
+  T? getValueOrNull(Point coordinate) {
     return metadata[coordinate];
   }
 
-  ValuedPoint<T> getValuedCoordinate(Point coordinate) {
+  ValuedPoint<T> getValuedPoint(Point coordinate) {
+    if (isOutOfBounds(coordinate)) {
+      throw RangeError('Coordinate $coordinate is out of bounds');
+    }
     final value = metadata[coordinate];
     return coordinate.withValue(value);
   }
 
   void setValue(Point coordinate, T value) {
+    if (isOutOfBounds(coordinate)) {
+      throw RangeError('Coordinate $coordinate is out of bounds');
+    }
     metadata[coordinate] = value;
   }
 
@@ -47,7 +60,7 @@ class AocGrid<T> {
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
         final point = (x: x, y: y);
-        final valued = getValuedCoordinate(point);
+        final valued = getValuedPoint(point);
         if (selector(valued)) {
           points.add(valued);
         }
@@ -61,19 +74,32 @@ typedef Point = ({int x, int y});
 
 typedef ValuedPoint<T> = ({int x, int y, T? value});
 
-extension ToValuedCoordiate on Point {
+extension ToValuedPoint on Point {
   ValuedPoint<T?> withValue<T>(T? value) {
     return (x: x, y: y, value: value);
   }
+}
 
+extension PointNeighbours on Point {
   Point get north => (x: x, y: y - 1);
   Point get south => (x: x, y: y + 1);
   Point get east => (x: x + 1, y: y);
   Point get west => (x: x - 1, y: y);
-  Point get northeast => (x: x + 1, y: y - 1);
-  Point get northwest => (x: x - 1, y: y - 1);
-  Point get southeast => (x: x + 1, y: y + 1);
-  Point get southwest => (x: x - 1, y: y + 1);
+  Point get northEast => (x: x + 1, y: y - 1);
+  Point get northWest => (x: x - 1, y: y - 1);
+  Point get southEast => (x: x + 1, y: y + 1);
+  Point get southWest => (x: x - 1, y: y + 1);
+}
+
+extension ValuedPointNeighbours on ValuedPoint {
+  Point get north => (x: x, y: y - 1);
+  Point get south => (x: x, y: y + 1);
+  Point get east => (x: x + 1, y: y);
+  Point get west => (x: x - 1, y: y);
+  Point get northEast => (x: x + 1, y: y - 1);
+  Point get northWest => (x: x - 1, y: y - 1);
+  Point get southEast => (x: x + 1, y: y + 1);
+  Point get southWest => (x: x - 1, y: y + 1);
 }
 
 extension ToPoint on ValuedPoint {
@@ -90,16 +116,16 @@ extension Neighbors<T> on AocGrid<T> {
     final north = point.north;
     final south = point.south;
     if (!isOutOfBounds(west)) {
-      points.add(getValuedCoordinate(west)!);
+      points.add(getValuedPoint(west)!);
     }
     if (!isOutOfBounds(east)) {
-      points.add(getValuedCoordinate(east)!);
+      points.add(getValuedPoint(east)!);
     }
     if (!isOutOfBounds(north)) {
-      points.add(getValuedCoordinate(north)!);
+      points.add(getValuedPoint(north)!);
     }
     if (!isOutOfBounds(south)) {
-      points.add(getValuedCoordinate(south)!);
+      points.add(getValuedPoint(south)!);
     }
 
     return points;
@@ -107,22 +133,36 @@ extension Neighbors<T> on AocGrid<T> {
 
   List<ValuedPoint<T>> neighborsDiagonalOf(Point point) {
     final List<ValuedPoint<T>> points = [];
-    final northwest = point.northwest;
-    final northeast = point.northeast;
-    final southwest = point.southwest;
-    final southeast = point.southeast;
+    final northwest = point.northWest;
+    final northeast = point.northEast;
+    final southwest = point.southWest;
+    final southeast = point.southEast;
     if (!isOutOfBounds(northwest)) {
-      points.add(getValuedCoordinate(northwest)!);
+      points.add(getValuedPoint(northwest)!);
     }
     if (!isOutOfBounds(northeast)) {
-      points.add(getValuedCoordinate(northeast)!);
+      points.add(getValuedPoint(northeast)!);
     }
     if (!isOutOfBounds(southwest)) {
-      points.add(getValuedCoordinate(southwest)!);
+      points.add(getValuedPoint(southwest)!);
     }
     if (!isOutOfBounds(southeast)) {
-      points.add(getValuedCoordinate(southeast)!);
+      points.add(getValuedPoint(southeast)!);
     }
     return points;
+  }
+}
+
+extension PointInDirection<T> on AocGrid<T> {
+  Iterable<ValuedPoint<T>> pointsInDirection(
+      Point point, Point Function(Point) nextPoint) sync* {
+    Point next = point;
+    while (true) {
+      if (isOutOfBounds(next)) {
+        return;
+      }
+      yield getValuedPoint(next);
+      next = nextPoint(next);
+    }
   }
 }

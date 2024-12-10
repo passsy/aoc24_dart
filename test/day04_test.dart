@@ -21,6 +21,7 @@ void main() {
           input: File('data/day04_input.txt').readAsStringSync(),
         );
         checkLastLineNotZero(output);
+        checkLastLine(output, '2551');
       });
     });
     group('Part 2', () {
@@ -37,6 +38,7 @@ void main() {
           input: File('data/day04_input.txt').readAsStringSync(),
         );
         checkLastLineNotZero(output);
+        checkLastLine(output, '1985');
       });
     });
   });
