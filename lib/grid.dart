@@ -1,15 +1,13 @@
-import 'dart:io';
-
 class AocGrid<T> {
   late final String textRepresentation;
   late final int width;
   late final int height;
   Map<Point, T?> metadata = {};
 
-  T? Function(String data, Point point) mapPoint;
-  String Function(T? data, Point point)? pointToString;
+  T Function(String data, Point point) mapPoint;
+  String Function(T data, Point point)? pointToString;
 
-  String Function(T? data, Point point) get pointToStringOrDefault {
+  String Function(T data, Point point) get pointToStringOrDefault {
     return pointToString ?? (data, point) => data.toString();
   }
 
@@ -37,7 +35,7 @@ class AocGrid<T> {
     this.pointToString,
   });
 
-  Iterable<GridPoint<T>> allValuePoints() sync* {
+  Iterable<GridPoint<T>> getAllGridPoints() sync* {
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
         final point = (x: x, y: y);
@@ -47,7 +45,7 @@ class AocGrid<T> {
     }
   }
 
-  Iterable<Point> allPoints() sync* {
+  Iterable<Point> getAllPoints() sync* {
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
         yield (x: x, y: y);
@@ -59,14 +57,18 @@ class AocGrid<T> {
     if (isOutOfBounds(coordinate)) {
       throw RangeError('Coordinate $coordinate is out of bounds');
     }
-    return metadata[coordinate]!;
+    return metadata[coordinate] as T;
   }
 
   T? getValueOrNull(Point coordinate) {
     return metadata[coordinate];
   }
 
-  GridPoint<T> getValuedPoint(Point coordinate) {
+  GridPoint<T> getGridPointFor(int x, int y) {
+    return getGridPoint((x: x, y: y));
+  }
+
+  GridPoint<T> getGridPoint(Point coordinate) {
     if (isOutOfBounds(coordinate)) {
       throw RangeError('Coordinate $coordinate is out of bounds');
     }
@@ -93,7 +95,7 @@ class AocGrid<T> {
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
         final point = (x: x, y: y);
-        final valued = getValuedPoint(point);
+        final valued = getGridPoint(point);
         if (selector(valued)) {
           points.add(valued);
         }
@@ -111,7 +113,7 @@ class AocGrid<T> {
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
         final point = (x: x, y: y);
-        final value = getValueOrNull(point);
+        final value = getValue(point);
         final char = pointToStringOrDefault(value, point);
         sb.write(char);
       }
@@ -180,16 +182,16 @@ extension Neighbors<T> on AocGrid<T> {
     final north = point.north;
     final south = point.south;
     if (!isOutOfBounds(west)) {
-      points.add(getValuedPoint(west)!);
+      points.add(getGridPoint(west));
     }
     if (!isOutOfBounds(east)) {
-      points.add(getValuedPoint(east)!);
+      points.add(getGridPoint(east));
     }
     if (!isOutOfBounds(north)) {
-      points.add(getValuedPoint(north)!);
+      points.add(getGridPoint(north));
     }
     if (!isOutOfBounds(south)) {
-      points.add(getValuedPoint(south)!);
+      points.add(getGridPoint(south));
     }
 
     return points;
@@ -202,16 +204,16 @@ extension Neighbors<T> on AocGrid<T> {
     final southwest = point.southWest;
     final southeast = point.southEast;
     if (!isOutOfBounds(northwest)) {
-      points.add(getValuedPoint(northwest)!);
+      points.add(getGridPoint(northwest));
     }
     if (!isOutOfBounds(northeast)) {
-      points.add(getValuedPoint(northeast)!);
+      points.add(getGridPoint(northeast));
     }
     if (!isOutOfBounds(southwest)) {
-      points.add(getValuedPoint(southwest)!);
+      points.add(getGridPoint(southwest));
     }
     if (!isOutOfBounds(southeast)) {
-      points.add(getValuedPoint(southeast)!);
+      points.add(getGridPoint(southeast));
     }
     return points;
   }
@@ -225,8 +227,33 @@ extension PointInDirection<T> on AocGrid<T> {
       if (isOutOfBounds(next)) {
         return;
       }
-      yield getValuedPoint(next);
+      yield getGridPoint(next);
       next = nextPoint(next);
     }
+  }
+}
+
+typedef MoveDirection = Point Function(Point point);
+
+Point oneNorth(Point point) => (x: point.x, y: point.y - 1);
+Point oneEast(Point point) => (x: point.x + 1, y: point.y);
+Point oneSouth(Point point) => (x: point.x, y: point.y + 1);
+Point oneWest(Point point) => (x: point.x - 1, y: point.y);
+
+extension RotateMoveDirection on MoveDirection {
+  MoveDirection rotateRight() {
+    if (this == oneNorth) {
+      return oneEast;
+    }
+    if (this == oneEast) {
+      return oneSouth;
+    }
+    if (this == oneSouth) {
+      return oneWest;
+    }
+    if (this == oneWest) {
+      return oneNorth;
+    }
+    throw Exception('Unknown direction');
   }
 }

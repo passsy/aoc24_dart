@@ -13,7 +13,7 @@ void solveDay06(String input) {
 
   AocGrid<String> grid = baseGrid.copy();
 
-  Point? moveUntilObstacle(Point point, Direction direction) {
+  Point? moveUntilObstacle(Point point, MoveDirection direction) {
     Point next = point;
     while (!grid.isOutOfBounds(next)) {
       final prev = next;
@@ -32,7 +32,7 @@ void solveDay06(String input) {
 
     final List<(Point, Point)> paths = [];
 
-    Direction direction = up;
+    MoveDirection direction = oneNorth;
     while (true) {
       grid.setValue(point, 'X');
       final next = moveUntilObstacle(point, direction);
@@ -51,7 +51,7 @@ void solveDay06(String input) {
   }
 
   int result = 0;
-  for (final point in baseGrid.allPoints()) {
+  for (final point in baseGrid.getAllPoints()) {
     grid = baseGrid.copy();
 
     if (grid.getValue(point) == '#') {
@@ -69,30 +69,4 @@ void solveDay06(String input) {
   }
 
   print(result);
-}
-
-typedef Point = ({int x, int y});
-typedef Direction = Point Function(Point point);
-
-Point up(Point point) => (x: point.x, y: point.y - 1);
-Point down(Point point) => (x: point.x, y: point.y + 1);
-Point left(Point point) => (x: point.x - 1, y: point.y);
-Point right(Point point) => (x: point.x + 1, y: point.y);
-
-extension on Direction {
-  Direction rotateRight() {
-    if (this == up) {
-      return right;
-    }
-    if (this == right) {
-      return down;
-    }
-    if (this == down) {
-      return left;
-    }
-    if (this == left) {
-      return up;
-    }
-    throw Exception('Unknown direction');
-  }
 }

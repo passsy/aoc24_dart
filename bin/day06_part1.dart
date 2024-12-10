@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:aoc24/grid.dart';
 
 const sampleSolution = '41';
@@ -13,7 +11,7 @@ void solveDay06(String input) {
     mapPoint: (data, point) => data,
   );
 
-  Point? moveUntilObstacle(Point point, Direction direction) {
+  Point? moveUntilObstacle(Point point, MoveDirection direction) {
     Point next = point;
     while (!grid.isOutOfBounds(next)) {
       final prev = next;
@@ -29,7 +27,7 @@ void solveDay06(String input) {
 
   Point point = grid.findFirst((it) => it.value == '^').point;
 
-  Direction direction = up;
+  MoveDirection direction = oneNorth;
   while (true) {
     grid.setValue(point, 'X');
     final next = moveUntilObstacle(point, direction);
@@ -44,29 +42,4 @@ void solveDay06(String input) {
 
   final result = grid.findAll((it) => it.value == 'X').length;
   print(result);
-}
-
-typedef Direction = Point Function(Point point);
-
-Point up(Point point) => (x: point.x, y: point.y - 1);
-Point down(Point point) => (x: point.x, y: point.y + 1);
-Point left(Point point) => (x: point.x - 1, y: point.y);
-Point right(Point point) => (x: point.x + 1, y: point.y);
-
-extension on Direction {
-  Direction rotateRight() {
-    if (this == up) {
-      return right;
-    }
-    if (this == right) {
-      return down;
-    }
-    if (this == down) {
-      return left;
-    }
-    if (this == left) {
-      return up;
-    }
-    throw Exception('Unknown direction');
-  }
 }
