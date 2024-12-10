@@ -37,7 +37,7 @@ class AocGrid<T> {
     this.pointToString,
   });
 
-  Iterable<ValuedPoint<T>> allValuePoints() sync* {
+  Iterable<GridPoint<T>> allValuePoints() sync* {
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
         final point = (x: x, y: y);
@@ -66,7 +66,7 @@ class AocGrid<T> {
     return metadata[coordinate];
   }
 
-  ValuedPoint<T> getValuedPoint(Point coordinate) {
+  GridPoint<T> getValuedPoint(Point coordinate) {
     if (isOutOfBounds(coordinate)) {
       throw RangeError('Coordinate $coordinate is out of bounds');
     }
@@ -88,8 +88,8 @@ class AocGrid<T> {
         coordinate.y >= height;
   }
 
-  List<ValuedPoint<T>> findAll(bool Function(ValuedPoint<T>) selector) {
-    final List<ValuedPoint<T>> points = [];
+  List<GridPoint<T>> findAll(bool Function(GridPoint<T>) selector) {
+    final List<GridPoint<T>> points = [];
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
         final point = (x: x, y: y);
@@ -102,7 +102,7 @@ class AocGrid<T> {
     return points;
   }
 
-  ValuedPoint<T> findFirst(bool Function(ValuedPoint<T>) selector) {
+  GridPoint<T> findFirst(bool Function(GridPoint<T>) selector) {
     return findAll(selector).first;
   }
 
@@ -136,10 +136,10 @@ class AocGrid<T> {
 
 typedef Point = ({int x, int y});
 
-typedef ValuedPoint<T> = ({int x, int y, T? value});
+typedef GridPoint<T> = ({int x, int y, T? value});
 
 extension ToValuedPoint on Point {
-  ValuedPoint<T?> withValue<T>(T? value) {
+  GridPoint<T?> withValue<T>(T? value) {
     return (x: x, y: y, value: value);
   }
 }
@@ -155,7 +155,7 @@ extension PointNeighbours on Point {
   Point get southWest => (x: x - 1, y: y + 1);
 }
 
-extension ValuedPointNeighbours on ValuedPoint {
+extension ValuedPointNeighbours on GridPoint {
   Point get north => (x: x, y: y - 1);
   Point get south => (x: x, y: y + 1);
   Point get east => (x: x + 1, y: y);
@@ -166,15 +166,15 @@ extension ValuedPointNeighbours on ValuedPoint {
   Point get southWest => (x: x - 1, y: y + 1);
 }
 
-extension ToPoint on ValuedPoint {
+extension ToPoint on GridPoint {
   Point get point {
     return (x: x, y: y);
   }
 }
 
 extension Neighbors<T> on AocGrid<T> {
-  List<ValuedPoint<T>> neighborsNoswOf(Point point) {
-    final List<ValuedPoint<T>> points = [];
+  List<GridPoint<T>> neighborsNoswOf(Point point) {
+    final List<GridPoint<T>> points = [];
     final west = point.west;
     final east = point.east;
     final north = point.north;
@@ -195,8 +195,8 @@ extension Neighbors<T> on AocGrid<T> {
     return points;
   }
 
-  List<ValuedPoint<T>> neighborsDiagonalOf(Point point) {
-    final List<ValuedPoint<T>> points = [];
+  List<GridPoint<T>> neighborsDiagonalOf(Point point) {
+    final List<GridPoint<T>> points = [];
     final northwest = point.northWest;
     final northeast = point.northEast;
     final southwest = point.southWest;
@@ -218,7 +218,7 @@ extension Neighbors<T> on AocGrid<T> {
 }
 
 extension PointInDirection<T> on AocGrid<T> {
-  Iterable<ValuedPoint<T>> pointsInDirection(
+  Iterable<GridPoint<T>> pointsInDirection(
       Point point, Point Function(Point) nextPoint) sync* {
     Point next = point;
     while (true) {

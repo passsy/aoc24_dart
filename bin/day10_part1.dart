@@ -40,7 +40,7 @@ void solveDay10(String input) {
   print(result);
 }
 
-typedef PointWithHeight = ValuedPoint<int>;
+typedef PointWithHeight = GridPoint<int>;
 
 extension on PointWithHeight {
   int get height => value!;
