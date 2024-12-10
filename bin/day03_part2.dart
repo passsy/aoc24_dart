@@ -13,9 +13,11 @@ void solveDay03(String input) {
     for (final token in tokens) {
       if (token is Do) {
         multiply = true;
+        continue;
       }
       if (token is Dont) {
         multiply = false;
+        continue;
       }
 
       if (token is Mul) {
@@ -27,6 +29,7 @@ void solveDay03(String input) {
         } else {
           print('dont: $a * $b');
         }
+        continue;
       }
 
       throw 'Unknown token: $token';
