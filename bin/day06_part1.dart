@@ -1,36 +1,25 @@
 import 'dart:io';
 
+import 'package:aoc24/grid.dart';
+
 const sampleSolution = '41';
 
 void solveDay06(String input) {
   // https://adventofcode.com/2024/day/6
   // Solve Part 1 here
 
-  final lines = input.split('\n');
-  final List<List<String>> array2d = lines.map((it) => it.split('')).toList();
-
-  final map = <Point, String>{};
-  for (int y = 0; y < array2d.length; y++) {
-    final row = array2d[y];
-    for (int x = 0; x < row.length; x++) {
-      final char = row[x];
-      map[(x: x, y: y)] = char;
-    }
-  }
-
-  bool isOutOfBounds(Point point) {
-    final x = point.x;
-    final y = point.y;
-    return x < 0 || y < 0 || x >= array2d[0].length || y >= array2d.length;
-  }
+  final grid = AocGrid<String>(
+    data: input,
+    mapPoint: (data, point) => data,
+  );
 
   Point? moveUntilObstacle(Point point, Direction direction) {
     Point next = point;
-    while (!isOutOfBounds(next)) {
+    while (!grid.isOutOfBounds(next)) {
       final prev = next;
+      grid.setValue(prev, 'X');
       next = direction(next);
-      final nextChar = map[next];
-      map[prev] = 'X';
+      final nextChar = grid.getValueOrNull(next);
       if (nextChar == '#') {
         return prev;
       }
@@ -38,23 +27,11 @@ void solveDay06(String input) {
     return null;
   }
 
-  void printMap() {
-    for (int y = 0; y < array2d.length; y++) {
-      final row = array2d[y];
-      for (int x = 0; x < row.length; x++) {
-        final char = map[(x: x, y: y)];
-        stdout.write(char);
-      }
-      stdout.write('\n');
-    }
-    stdout.write('\n');
-  }
-
-  Point point = map.entries.firstWhere((element) => element.value == '^').key;
+  Point point = grid.findFirst((it) => it.value == '^').point;
 
   Direction direction = up;
   while (true) {
-    map[point] = 'X';
+    grid.setValue(point, 'X');
     final next = moveUntilObstacle(point, direction);
     if (next == null) {
       // out of bounds
@@ -62,13 +39,13 @@ void solveDay06(String input) {
     }
     point = next;
     direction = direction.rotateRight();
-    printMap();
+    grid.printToConsole();
   }
 
-  print(map.entries.where((element) => element.value == 'X').length);
+  final result = grid.findAll((it) => it.value == 'X').length;
+  print(result);
 }
 
-typedef Point = ({int x, int y});
 typedef Direction = Point Function(Point point);
 
 Point up(Point point) => (x: point.x, y: point.y - 1);

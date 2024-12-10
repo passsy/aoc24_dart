@@ -1,15 +1,21 @@
+import 'dart:io';
+
 class AocGrid<T> {
   late final String textRepresentation;
   late final int width;
   late final int height;
-  late final List<List<String>> raw2d;
   Map<Point, T?> metadata = {};
 
   T? Function(String data, Point point) mapPoint;
+  String Function(T? data, Point point)? pointToString;
 
-  AocGrid({required String data, required this.mapPoint}) {
+  String Function(T? data, Point point) get pointToStringOrDefault {
+    return pointToString ?? (data, point) => data.toString();
+  }
+
+  AocGrid({required String data, required this.mapPoint, this.pointToString}) {
     textRepresentation = data;
-    raw2d = data.split('\n').map((it) => it.split('')).toList();
+    final raw2d = data.split('\n').map((it) => it.split('')).toList();
     height = raw2d.length;
     width = raw2d[0].length;
 
@@ -18,6 +24,33 @@ class AocGrid<T> {
       for (int x = 0; x < row.length; x++) {
         final mapped = mapPoint(row[x], (x: x, y: y));
         metadata[(x: x, y: y)] = mapped;
+      }
+    }
+  }
+
+  AocGrid._copy({
+    required this.textRepresentation,
+    required this.width,
+    required this.height,
+    required this.metadata,
+    required this.mapPoint,
+    this.pointToString,
+  });
+
+  Iterable<ValuedPoint<T>> allValuePoints() sync* {
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        final point = (x: x, y: y);
+        final value = getValueOrNull(point);
+        yield point.withValue(value);
+      }
+    }
+  }
+
+  Iterable<Point> allPoints() sync* {
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        yield (x: x, y: y);
       }
     }
   }
@@ -67,6 +100,37 @@ class AocGrid<T> {
       }
     }
     return points;
+  }
+
+  ValuedPoint<T> findFirst(bool Function(ValuedPoint<T>) selector) {
+    return findAll(selector).first;
+  }
+
+  void printToConsole() {
+    final sb = StringBuffer();
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        final point = (x: x, y: y);
+        final value = getValueOrNull(point);
+        final char = pointToStringOrDefault(value, point);
+        sb.write(char);
+      }
+      sb.write('\n');
+    }
+    sb.write('\n');
+
+    print(sb);
+  }
+
+  AocGrid<T> copy() {
+    return AocGrid._copy(
+      textRepresentation: textRepresentation,
+      width: width,
+      height: height,
+      metadata: Map.of(metadata),
+      mapPoint: mapPoint,
+      pointToString: pointToString,
+    );
   }
 }
 

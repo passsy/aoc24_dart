@@ -1,38 +1,25 @@
+import 'package:aoc24/grid.dart';
+
 const sampleSolution = '6';
 
 void solveDay06(String input) {
   // https://adventofcode.com/2024/day/6
   // Solve Part 2 here
 
-  final lines = input.split('\n');
-  final List<List<String>> array2d = lines.map((it) => it.split('')).toList();
-  final mapHeight = array2d.length;
-  final mapWidth = array2d[0].length;
+  final baseGrid = AocGrid<String>(
+    data: input,
+    mapPoint: (data, point) => data,
+  );
 
-  final initialMap = <Point, String>{};
-  for (int y = 0; y < array2d.length; y++) {
-    final row = array2d[y];
-    for (int x = 0; x < row.length; x++) {
-      final char = row[x];
-      initialMap[(x: x, y: y)] = char;
-    }
-  }
-
-  var map = <Point, String>{};
-
-  bool isOutOfBounds(Point point) {
-    final x = point.x;
-    final y = point.y;
-    return x < 0 || y < 0 || x >= mapWidth || y >= mapHeight;
-  }
+  AocGrid<String> grid = baseGrid.copy();
 
   Point? moveUntilObstacle(Point point, Direction direction) {
     Point next = point;
-    while (!isOutOfBounds(next)) {
+    while (!grid.isOutOfBounds(next)) {
       final prev = next;
+      grid.setValue(prev, 'X');
       next = direction(next);
-      final nextChar = map[next];
-      map[prev] = 'X';
+      final nextChar = grid.getValueOrNull(next);
       if (nextChar == '#') {
         return prev;
       }
@@ -41,15 +28,14 @@ void solveDay06(String input) {
   }
 
   bool isLoop() {
-    Point point = map.entries.firstWhere((element) => element.value == '^').key;
+    Point point = grid.findFirst((it) => it.value == '^').point;
 
     final List<(Point, Point)> paths = [];
 
     Direction direction = up;
     while (true) {
-      map[point] = 'X';
+      grid.setValue(point, 'X');
       final next = moveUntilObstacle(point, direction);
-
       if (next == null) {
         // out of bounds
         return false;
@@ -65,25 +51,20 @@ void solveDay06(String input) {
   }
 
   int result = 0;
-  for (int y = 0; y < array2d.length; y++) {
-    final row = array2d[y];
-    for (int x = 0; x < row.length; x++) {
-      final point = (x: x, y: y);
+  for (final point in baseGrid.allPoints()) {
+    grid = baseGrid.copy();
 
-      map = Map.of(initialMap);
-      final char = map[point];
-      if (char == '^') {
-        continue;
-      }
-      if (char == '#') {
-        continue;
-      }
-      map[point] = '#';
+    if (grid.getValue(point) == '#') {
+      continue;
+    }
+    if (grid.getValue(point) == '^') {
+      continue;
+    }
+    grid.setValue(point, '#');
 
-      print('Checking $point');
-      if (isLoop()) {
-        result++;
-      }
+    print('Checking $point');
+    if (isLoop()) {
+      result++;
     }
   }
 
