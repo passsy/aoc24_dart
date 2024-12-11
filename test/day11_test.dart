@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:test/test.dart';
 import '../bin/day11_part1.dart' as day11_part1;
 import '../bin/day11_part2.dart' as day11_part2;

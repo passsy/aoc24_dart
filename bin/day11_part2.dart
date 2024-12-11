@@ -2,10 +2,8 @@ import 'package:dartx/dartx.dart';
 
 extension type Stone(int number) {}
 
+// https://adventofcode.com/2024/day/11
 void solveDay11(String input) {
-  // https://adventofcode.com/2024/day/11
-  // Solve Part 2 here
-
   final Map<Stone, int> stones = input
       .split(' ')
       .map(int.parse)
