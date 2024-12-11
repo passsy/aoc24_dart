@@ -6,9 +6,8 @@ extension type Stone(int number) {}
 void solveDay11(String input) {
   final Map<Stone, int> stones = input
       .split(' ')
-      .map(int.parse)
-      .groupBy((stone) => stone)
-      .map((key, value) => MapEntry(Stone(key), value.length));
+      .groupBy((n) => Stone(int.parse(n)))
+      .mapValues((it) => it.value.length);
 
   print(blink(75, stones));
 }
