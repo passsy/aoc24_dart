@@ -36,6 +36,36 @@ Future<String> testMain(
   return fakeStdout.lines.join('\n');
 }
 
+/// Calls a main function with [input] as first and only argument
+/// and returns the output (stdout) of the program as full String
+Future<String> testFunction(
+  FutureOr Function() fn,
+) async {
+  final ioStdout = io.stdout;
+  final fakeStdout = FakeStdoutStream();
+
+  await runZoned(
+    () async => io.IOOverrides.runZoned(
+      () async {
+        await fn();
+      },
+      stdout: () => fakeStdout,
+    ),
+    zoneSpecification: ZoneSpecification(
+      print: (self, parent, zone, line) {
+        // print live, while executing the main function
+        // This is useful for large puzzles, to see progress
+        ioStdout.writeln(line);
+
+        // catch print calls and return them as result of the main function
+        final override = io.IOOverrides.current;
+        override?.stdout.writeln(line);
+      },
+    ),
+  );
+  return fakeStdout.lines.join('\n');
+}
+
 class FakeStdoutStream with Fake implements io.Stdout {
   final List<List<int>> _writes = <List<int>>[];
 
