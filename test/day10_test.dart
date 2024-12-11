@@ -16,10 +16,8 @@ void main() {
         checkLastLine(output, day10_part1.sampleSolution);
       });
       test('Solution p1', () async {
-        final output = await testMain(
-          day10_part1.solveDay10,
-          input: File('data/day10_input.txt').readAsStringSync(),
-        );
+        final input = File('data/day10_input.txt').readAsStringSync();
+        final output = await capturePrints(() => day10_part1.solveDay10(input));
         checkLastLineNotZero(output);
       });
     });
