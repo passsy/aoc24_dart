@@ -50,6 +50,38 @@ void solveDay12(String input) {
 
   print("allGroups: ${allGroups.keys}");
 
+  void _removeInBothDirections(
+    Fence fence,
+    List<Fence> toProcess,
+  ) {
+    final isVertical = fence.inside.point.x == fence.outside.point.x;
+    final oneDown = (dx: -1, dy: 0);
+    final oneUp = (dx: 1, dy: 0);
+    final oneLeft = (dx: 0, dy: -1);
+    final oneRight = (dx: 0, dy: 1);
+    final directions = isVertical ? [oneDown, oneUp] : [oneLeft, oneRight];
+
+    for (final direction in directions) {
+      int step = 0;
+      while (true) {
+        step++;
+        final nextInside = grid.getGridPointWithOOB((
+          x: fence.inside.point.x + direction.dx * step,
+          y: fence.inside.point.y + direction.dy * step
+        ));
+        final nextOutside = grid.getGridPointWithOOB((
+          x: fence.outside.point.x + direction.dx * step,
+          y: fence.outside.point.y + direction.dy * step
+        ));
+        final point = (inside: nextInside, outside: nextOutside);
+        if (!toProcess.contains(point)) {
+          break;
+        }
+        toProcess.remove(point);
+      }
+    }
+  }
+
   int sides(Set<GridPoint<String>> group) {
     final groupName = group.first.value;
 
@@ -66,72 +98,8 @@ void solveDay12(String input) {
 
     while (toProcess.isNotEmpty) {
       final fence = toProcess.removeAt(0);
-      final isVertical = fence.inside.point.x == fence.outside.point.x;
-      if (!isVertical) {
-        sides++;
-        int up = 0;
-        while (true) {
-          up++;
-          final nextUpInside = fence.inside.point.y - up;
-          final nextInside = grid
-              .getGridPointWithOOB((x: fence.inside.point.x, y: nextUpInside));
-          final nextUpOutside = fence.outside.point.y - up;
-          final nextOutside = grid.getGridPointWithOOB(
-              (x: fence.outside.point.x, y: nextUpOutside));
-          if (toProcess.contains((inside: nextInside, outside: nextOutside))) {
-            toProcess.remove((inside: nextInside, outside: nextOutside));
-          } else {
-            break;
-          }
-        }
-        int down = 0;
-        while (true) {
-          down++;
-          final nextDownInside = fence.inside.point.y + down;
-          final nextInside = grid.getGridPointWithOOB(
-              (x: fence.inside.point.x, y: nextDownInside));
-          final nextDownOutside = fence.outside.point.y + down;
-          final nextOutside = grid.getGridPointWithOOB(
-              (x: fence.outside.point.x, y: nextDownOutside));
-          if (toProcess.contains((inside: nextInside, outside: nextOutside))) {
-            toProcess.remove((inside: nextInside, outside: nextOutside));
-          } else {
-            break;
-          }
-        }
-      } else {
-        sides++;
-        int left = 0;
-        while (true) {
-          left++;
-          final nextLeftInside = fence.inside.point.x - left;
-          final nextInside = grid.getGridPointWithOOB(
-              (x: nextLeftInside, y: fence.inside.point.y));
-          final nextLeftOutside = fence.outside.point.x - left;
-          final nextOutside = grid.getGridPointWithOOB(
-              (x: nextLeftOutside, y: fence.outside.point.y));
-          if (toProcess.contains((inside: nextInside, outside: nextOutside))) {
-            toProcess.remove((inside: nextInside, outside: nextOutside));
-          } else {
-            break;
-          }
-        }
-        int right = 0;
-        while (true) {
-          right++;
-          final nextRightInside = fence.inside.point.x + right;
-          final nextInside = grid.getGridPointWithOOB(
-              (x: nextRightInside, y: fence.inside.point.y));
-          final nextRightOutside = fence.outside.point.x + right;
-          final nextOutside = grid.getGridPointWithOOB(
-              (x: nextRightOutside, y: fence.outside.point.y));
-          if (toProcess.contains((inside: nextInside, outside: nextOutside))) {
-            toProcess.remove((inside: nextInside, outside: nextOutside));
-          } else {
-            break;
-          }
-        }
-      }
+      sides++;
+      _removeInBothDirections(fence, toProcess);
     }
 
     return sides;
