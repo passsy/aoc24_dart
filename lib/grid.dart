@@ -76,6 +76,12 @@ class AocGrid<T> {
     return coordinate.withValue(value);
   }
 
+  /// returns out of bounds values
+  GridPoint<T> getGridPointWithOOB(Point coordinate) {
+    final value = metadata[coordinate];
+    return coordinate.withValue(value);
+  }
+
   void setValue(Point coordinate, T value) {
     if (isOutOfBounds(coordinate)) {
       throw RangeError('Coordinate $coordinate is out of bounds');
@@ -175,44 +181,66 @@ extension ToPoint on GridPoint {
 }
 
 extension Neighbors<T> on AocGrid<T> {
-  List<GridPoint<T>> neighborsNoswOf(Point point) {
+  List<GridPoint<T>> neighborsNoswOf(
+    Point point, {
+    bool includeOutOfBounds = false,
+  }) {
     final List<GridPoint<T>> points = [];
     final west = point.west;
     final east = point.east;
     final north = point.north;
     final south = point.south;
-    if (!isOutOfBounds(west)) {
+    if (includeOutOfBounds) {
+      points.add(getGridPointWithOOB(west));
+    } else if (!isOutOfBounds(west)) {
       points.add(getGridPoint(west));
     }
-    if (!isOutOfBounds(east)) {
+    if (includeOutOfBounds) {
+      points.add(getGridPointWithOOB(east));
+    } else if (!isOutOfBounds(east)) {
       points.add(getGridPoint(east));
     }
-    if (!isOutOfBounds(north)) {
+    if (includeOutOfBounds) {
+      points.add(getGridPointWithOOB(north));
+    } else if (!isOutOfBounds(north)) {
       points.add(getGridPoint(north));
     }
-    if (!isOutOfBounds(south)) {
+    if (includeOutOfBounds) {
+      points.add(getGridPointWithOOB(south));
+    } else if (!isOutOfBounds(south)) {
       points.add(getGridPoint(south));
     }
 
     return points;
   }
 
-  List<GridPoint<T>> neighborsDiagonalOf(Point point) {
+  List<GridPoint<T>> neighborsDiagonalOf(
+    Point point, {
+    bool includeOutOfBounds = false,
+  }) {
     final List<GridPoint<T>> points = [];
     final northwest = point.northWest;
     final northeast = point.northEast;
     final southwest = point.southWest;
     final southeast = point.southEast;
-    if (!isOutOfBounds(northwest)) {
+    if (includeOutOfBounds) {
+      points.add(getGridPointWithOOB(northwest));
+    } else if (!isOutOfBounds(northwest)) {
       points.add(getGridPoint(northwest));
     }
-    if (!isOutOfBounds(northeast)) {
+    if (includeOutOfBounds) {
+      points.add(getGridPointWithOOB(northeast));
+    } else if (!isOutOfBounds(northeast)) {
       points.add(getGridPoint(northeast));
     }
-    if (!isOutOfBounds(southwest)) {
+    if (includeOutOfBounds) {
+      points.add(getGridPointWithOOB(southwest));
+    } else if (!isOutOfBounds(southwest)) {
       points.add(getGridPoint(southwest));
     }
-    if (!isOutOfBounds(southeast)) {
+    if (includeOutOfBounds) {
+      points.add(getGridPointWithOOB(southeast));
+    } else if (!isOutOfBounds(southeast)) {
       points.add(getGridPoint(southeast));
     }
     return points;
