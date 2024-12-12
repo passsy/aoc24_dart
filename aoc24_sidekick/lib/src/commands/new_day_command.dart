@@ -24,10 +24,8 @@ class NewDayCommand extends Command {
     File('bin/day${day}_part1.dart')
       ..createSync()
       ..writeAsStringSync('''
+// https://adventofcode.com/2024/day/$singleDigitDay
 void solveDay$day(String input) {
-  // https://adventofcode.com/2024/day/$singleDigitDay
-  // Solve Part 1 here
-  
   final lines = input.split('\\n').map((line) {
     // \\w Any word character
     // \\s Any whitespace character
@@ -59,9 +57,9 @@ void solveDay$day(String input) {
     File('bin/day${day}_part2.dart')
       ..createSync()
       ..writeAsStringSync('''
+// https://adventofcode.com/2024/day/$singleDigitDay 
 void solveDay$day(String input) {
-  // https://adventofcode.com/2024/day/$singleDigitDay 
-  // Solve Part 2 here
+  // TODO Solve Part 2 here
   print(0);
 }
 ''');
