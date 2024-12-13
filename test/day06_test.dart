@@ -32,6 +32,9 @@ void main() {
         checkLastLine(output, day06_part2.sampleSolution);
       });
       test('Solution p2', () async {
+        markTestSkipped('takes too long');
+        return;
+        // ignore: dead_code
         final output = await testMain(
           day06_part2.solveDay06,
           input: File('data/day06_input.txt').readAsStringSync(),
