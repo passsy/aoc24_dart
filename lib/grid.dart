@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 class AocGrid<T> {
   late final String textRepresentation;
   late final int width;
@@ -181,6 +183,7 @@ extension ToPoint on GridPoint {
 }
 
 extension Neighbors<T> on AocGrid<T> {
+  // TODO rename to adjacent?
   List<GridPoint<T>> neighborsNoswOf(
     Point point, {
     bool includeOutOfBounds = false,
@@ -283,5 +286,86 @@ extension RotateMoveDirection on MoveDirection {
       return oneNorth;
     }
     throw Exception('Unknown direction');
+  }
+
+  MoveDirection rotateLeft() {
+    if (this == oneNorth) {
+      return oneWest;
+    }
+    if (this == oneWest) {
+      return oneSouth;
+    }
+    if (this == oneSouth) {
+      return oneEast;
+    }
+    if (this == oneEast) {
+      return oneNorth;
+    }
+    throw Exception('Unknown direction');
+  }
+}
+
+extension SearchAllPaths<T> on AocGrid<T> {
+  List<GridPoint<T>> findFastestPaths(
+    Point start,
+    Point end, {
+    required bool Function(GridPoint<T>) isPath,
+    int Function(List<GridPoint<T>> path)? cost,
+  }) {
+    final costFunction = cost ?? ((it) => 1);
+    final pathTiles = getAllGridPoints().where((it) => isPath(it)).toList();
+    final startTile = pathTiles.firstWhere((it) => it.point == start);
+    final endTile = pathTiles.firstWhere((it) => it.point == end);
+
+    // djiikstra's algorithm, but custom cost function
+
+    final map = HashMap<GridPoint<T>, int>();
+    final previous = HashMap<GridPoint<T>, GridPoint<T>>();
+    final visited = HashSet<GridPoint<T>>();
+    final unvisited = HashSet<GridPoint<T>>.from(pathTiles);
+
+    map[startTile] = 0;
+
+    while (unvisited.isNotEmpty) {
+      final current = unvisited.reduce((a, b) =>
+          (map[a] ?? 1_000_000_000) < (map[b] ?? 1_000_000_000) ? a : b);
+      unvisited.remove(current);
+      visited.add(current);
+
+      final neighbors = neighborsNoswOf(current.point);
+      for (final neighbor in neighbors) {
+        if (!isPath(neighbor)) {
+          continue;
+        }
+        if (visited.contains(neighbor)) {
+          continue;
+        }
+
+        final List<GridPoint<T>> pathUntilNow = [neighbor];
+        var currentPoint = current;
+        while (currentPoint != startTile) {
+          pathUntilNow.add(currentPoint);
+          currentPoint = previous[currentPoint]!;
+        }
+        pathUntilNow.add(startTile);
+
+        final tentativeScore = costFunction(pathUntilNow);
+        final neighborScore = map[neighbor] ?? 1_000_000_000;
+        if (tentativeScore < neighborScore) {
+          map[neighbor] = tentativeScore;
+          previous[neighbor] = current;
+        }
+      }
+    }
+
+    final path = <GridPoint<T>>[];
+    var current = endTile;
+    while (current != startTile) {
+      path.add(current);
+      current = previous[current]!;
+    }
+    path.add(startTile);
+
+    return path.reversed.toList();
   }
 }

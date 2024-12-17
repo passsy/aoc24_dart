@@ -1,8 +1,6 @@
-// https://adventofcode.com/2024/day/14
-import 'dart:io';
-
 import 'package:dartx/dartx.dart';
 
+// https://adventofcode.com/2024/day/14
 void solveDay14(
   String input, {
   int gridWidth = 101,
