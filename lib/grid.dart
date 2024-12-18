@@ -1,20 +1,26 @@
 import 'dart:collection';
 
+import 'package:dartx/dartx.dart';
+
 class AocGrid<T> {
   late final String textRepresentation;
   late final int width;
   late final int height;
   Map<Point, T?> metadata = {};
 
-  T Function(String data, Point point) mapPoint;
+  T Function(String data, Point point)? mapPoint;
   String Function(T data, Point point)? pointToString;
 
   String Function(T data, Point point) get pointToStringOrDefault {
     return pointToString ?? (data, point) => data.toString();
   }
 
-  AocGrid({required String data, required this.mapPoint, this.pointToString}) {
+  AocGrid(
+      {required String data,
+      required T Function(String data, Point point) mapPoint,
+      this.pointToString}) {
     textRepresentation = data;
+    this.mapPoint = mapPoint;
     final raw2d = data.split('\n').map((it) => it.split('')).toList();
     height = raw2d.length;
     width = raw2d[0].length;
@@ -22,8 +28,24 @@ class AocGrid<T> {
     for (int y = 0; y < raw2d.length; y++) {
       final row = raw2d[y];
       for (int x = 0; x < row.length; x++) {
-        final mapped = mapPoint(row[x], (x: x, y: y));
+        final mapped = mapPoint!(row[x], (x: x, y: y));
         metadata[(x: x, y: y)] = mapped;
+      }
+    }
+  }
+  AocGrid.empty({
+    required this.width,
+    required this.height,
+    T? fill,
+    this.pointToString,
+  }) : mapPoint = null {
+    textRepresentation = '';
+    if (fill != null) {
+      for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+          final point = (x: x, y: y);
+          metadata[point] = fill;
+        }
       }
     }
   }
@@ -306,25 +328,33 @@ extension RotateMoveDirection on MoveDirection {
 }
 
 extension SearchAllPaths<T> on AocGrid<T> {
-  List<GridPoint<T>> findFastestPaths(
+  List<GridPoint<T>>? findFastestPath(
     Point start,
     Point end, {
     required bool Function(GridPoint<T>) isPath,
     int Function(List<GridPoint<T>> path)? cost,
   }) {
-    final costFunction = cost ?? ((it) => 1);
+    final costFunction = cost ?? ((it) => it.length);
     final pathTiles = getAllGridPoints().where((it) => isPath(it)).toList();
-    final startTile = pathTiles.firstWhere((it) => it.point == start);
-    final endTile = pathTiles.firstWhere((it) => it.point == end);
+    final startTile = pathTiles.firstOrNullWhere((it) => it.point == start);
+    if (startTile == null) {
+      return null;
+    }
+    final endTile = pathTiles.firstOrNullWhere((it) => it.point == end);
+    if (endTile == null) {
+      return null;
+    }
 
     // djiikstra's algorithm, but custom cost function
 
     final map = HashMap<GridPoint<T>, int>();
+    final paths = HashMap<GridPoint<T>, List<GridPoint<T>>>();
     final previous = HashMap<GridPoint<T>, GridPoint<T>>();
     final visited = HashSet<GridPoint<T>>();
     final unvisited = HashSet<GridPoint<T>>.from(pathTiles);
 
     map[startTile] = 0;
+    paths[startTile] = [startTile];
 
     while (unvisited.isNotEmpty) {
       final current = unvisited.reduce((a, b) =>
@@ -341,31 +371,25 @@ extension SearchAllPaths<T> on AocGrid<T> {
           continue;
         }
 
-        final List<GridPoint<T>> pathUntilNow = [neighbor];
-        var currentPoint = current;
-        while (currentPoint != startTile) {
-          pathUntilNow.add(currentPoint);
-          currentPoint = previous[currentPoint]!;
+        final untilHere = paths[current];
+        if (untilHere == null) {
+          continue;
         }
-        pathUntilNow.add(startTile);
-
-        final tentativeScore = costFunction(pathUntilNow);
+        final tentativeScore = costFunction([...paths[current]!, neighbor]);
         final neighborScore = map[neighbor] ?? 1_000_000_000;
         if (tentativeScore < neighborScore) {
           map[neighbor] = tentativeScore;
           previous[neighbor] = current;
+          paths[neighbor] = [...paths[current]!, neighbor];
+          unvisited.add(neighbor);
         }
       }
     }
 
-    final path = <GridPoint<T>>[];
-    var current = endTile;
-    while (current != startTile) {
-      path.add(current);
-      current = previous[current]!;
+    final path = paths[endTile];
+    if (path == null) {
+      return null;
     }
-    path.add(startTile);
-
-    return path.reversed.toList();
+    return path;
   }
 }

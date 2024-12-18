@@ -65,7 +65,7 @@ void solveDay16(String input) {
     return cost;
   }
 
-  final path = grid.findFastestPaths(
+  final path = grid.findFastestPath(
     start.point,
     end.point,
     isPath: (it) => it.value is Path,
