@@ -71,7 +71,7 @@ void solveDay16(String input) {
     isPath: (it) => it.value is Path,
     cost: (path) => pathCost(path),
   );
-  print('Found path of length ${path.length}');
+  print('Found path of length ${path!.length}');
   final cheapestPath = pathCost(path);
   print('cheapestPath cost ${cheapestPath}');
   tiles = path.map((it) => it.point).toList();
