@@ -28,7 +28,7 @@ class AocGrid<T> {
     for (int y = 0; y < raw2d.length; y++) {
       final row = raw2d[y];
       for (int x = 0; x < row.length; x++) {
-        final mapped = mapPoint!(row[x], (x: x, y: y));
+        final mapped = mapPoint(row[x], (x: x, y: y));
         metadata[(x: x, y: y)] = mapped;
       }
     }
