@@ -187,6 +187,12 @@ extension PointNeighbours on Point {
   Point get southWest => (x: x - 1, y: y + 1);
 }
 
+extension ManhattanDistance on Point {
+  int manhattanDistance(Point other) {
+    return (x - other.x).abs() + (y - other.y).abs();
+  }
+}
+
 extension ValuedPointNeighbours on GridPoint {
   Point get north => (x: x, y: y - 1);
   Point get south => (x: x, y: y + 1);
@@ -328,6 +334,7 @@ extension RotateMoveDirection on MoveDirection {
 }
 
 extension SearchAllPaths<T> on AocGrid<T> {
+  /// Djikstra's algorithm for [AocGrid], but custom cost function
   List<GridPoint<T>>? findFastestPath(
     Point start,
     Point end, {
@@ -345,13 +352,11 @@ extension SearchAllPaths<T> on AocGrid<T> {
       return null;
     }
 
-    // djiikstra's algorithm, but custom cost function
-
     final map = HashMap<GridPoint<T>, int>();
     final paths = HashMap<GridPoint<T>, List<GridPoint<T>>>();
     final previous = HashMap<GridPoint<T>, GridPoint<T>>();
     final visited = HashSet<GridPoint<T>>();
-    final unvisited = HashSet<GridPoint<T>>.from(pathTiles);
+    final unvisited = HashSet<GridPoint<T>>.from([startTile]);
 
     map[startTile] = 0;
     paths[startTile] = [startTile];
